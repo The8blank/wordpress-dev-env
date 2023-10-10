@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  # Service de base de données MySQL pour WordPress
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: your_mysql_root_password
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: your_mysql_password
+
+  # Service WordPress avec une configuration PHP personnalisée
+  wordpress:
+    image: wordpress:latest
+    depends_on:
+      - db
+    ports:
+      - "8000:80"
+    volumes:
+      - ./wordpress:/var/www/html
+      # Montez le répertoire de votre custom.ini dans le conteneur
+      - ./custom.ini:/usr/local/etc/php/conf.d/custom.ini
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: your_mysql_password
+
+volumes:
+  db_data:
